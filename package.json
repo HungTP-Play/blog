@@ -32,7 +32,7 @@
         "prettier": "^2.7.1"
     },
     "lint-staged": {
-        "*": [
+        "src/**": [
             "npm run format"
         ]
     },

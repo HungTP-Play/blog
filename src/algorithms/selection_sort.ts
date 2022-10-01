@@ -16,6 +16,12 @@ export function selectionSort(arr: number[]): number[] {
     return arr
 }
 
+/**
+ * Swap two elements in array
+ * @param i
+ * @param j
+ * @param arr
+ */
 export function swap(i: number, j: number, arr: number[]) {
     const temp = arr[i]
     arr[i] = arr[j]

@@ -1,4 +1,4 @@
-import { swap } from '../algorithms/bubble_sort'
+import { swap } from '../algorithms/bubble.sort'
 
 /**
  * Heap Data Structure (see: https://www.geeksforgeeks.org/heap-data-structure/)

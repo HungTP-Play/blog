@@ -1,4 +1,4 @@
-import { selectionSort } from './selection_sort'
+import { selectionSort } from './selection.sort'
 
 describe('Test Selection Sort', () => {
     const cases = [

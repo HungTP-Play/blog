@@ -1,3 +1,10 @@
+/**
+ * Implementation of Insertion Sort algorithm
+ *
+ * O(n^2) time complexity
+ * @param arr
+ * @returns
+ */
 export function insertionSort(arr: number[]): number[] {
     for (let sorted_index = 1; sorted_index < arr.length; sorted_index++) {
         const element = arr[sorted_index]

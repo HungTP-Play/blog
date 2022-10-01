@@ -1,4 +1,11 @@
 // Implement TimSort (see: https://en.wikipedia.org/wiki/Timsort)
+/**
+ * Implementation of Tim Sort algorithm (see: https://en.wikipedia.org/wiki/Timsort)
+ *
+ * O(n log n) time complexity
+ * @param arr
+ * @returns
+ */
 export function timSort(arr: number[]): number[] {
     const run = 32
 

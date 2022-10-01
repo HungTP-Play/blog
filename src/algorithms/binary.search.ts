@@ -1,3 +1,11 @@
+/**
+ * Implementation of binary search algorithm
+ *
+ * O(log n) time complexity
+ * @param arr
+ * @param target
+ * @returns
+ */
 export function binarySearch(arr: number[], target: number): number {
     let left = 0
     let right = arr.length - 1

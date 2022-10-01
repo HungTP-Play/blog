@@ -1,5 +1,7 @@
 /**
  * Implement Bubble Sort (see: https://en.wikipedia.org/wiki/Bubble_sort)
+ *
+ * O(n^2) time complexity
  * @param arr
  * @returns
  */

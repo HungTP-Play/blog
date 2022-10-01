@@ -1,5 +1,7 @@
 /**
  * Sort array using selection sort algorithm (see: https://en.wikipedia.org/wiki/Selection_sort)
+ *
+ * O(n^2) time complexity
  * @param arr
  */
 export function selectionSort(arr: number[]): number[] {

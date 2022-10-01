@@ -1,5 +1,7 @@
 /**
  * Implementation of Quick Sort algorithm (see: https://en.wikipedia.org/wiki/Quicksort)
+ *
+ * O(n log n) time complexity
  * @param arr
  * @returns
  */

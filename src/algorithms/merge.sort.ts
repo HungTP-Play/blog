@@ -1,3 +1,10 @@
+/**
+ * Implementation of merge sort algorithm
+ *
+ * O(n log n) time complexity
+ * @param arr
+ * @returns
+ */
 export function mergeSort(arr: number[]): number[] {
     if (arr.length <= 1) {
         return arr

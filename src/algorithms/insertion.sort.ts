@@ -8,11 +8,12 @@
 export function insertionSort(arr: number[]): number[] {
     for (let sorted_index = 1; sorted_index < arr.length; sorted_index++) {
         const element = arr[sorted_index]
-        let find_index = sorted_index
-        for (; find_index > 0 && arr[find_index - 1] > element; find_index--) {
-            arr[find_index] = arr[find_index - 1]
+        let compare_index = sorted_index - 1
+        while (compare_index >= 0 && arr[compare_index] > element) {
+            arr[compare_index + 1] = arr[compare_index]
+            compare_index--
         }
-        arr[find_index] = element
+        arr[compare_index + 1] = element
     }
     return arr
 }

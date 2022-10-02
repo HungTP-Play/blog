@@ -7,7 +7,11 @@
  */
 export function bubbleSort(arr: number[]): number[] {
     for (let keep = 0; keep < arr.length; keep++) {
-        for (let compare_index = 0; i < arr.length - keep; i++) {
+        for (
+            let compare_index = 0;
+            compare_index < arr.length - keep;
+            compare_index++
+        ) {
             if (arr[compare_index] > arr[compare_index + 1]) {
                 const temp = arr[compare_index]
                 arr[compare_index] = arr[compare_index + 1]

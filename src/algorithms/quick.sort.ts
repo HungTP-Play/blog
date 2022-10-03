@@ -23,36 +23,9 @@ export function quickSort(arr: number[]): number[] {
 }
 
 /**
- * Partition function for Quick Sort algorithm
- * @param arr
- * @param left
- * @param right
- * @returns
- */
-export function partition(arr: number[], left: number, right: number): number {
-    const pivot = arr[Math.floor((right + left) / 2)]
-    let i = left
-    let j = right
-    while (i <= j) {
-        while (arr[i] < pivot) {
-            i++
-        }
-        while (arr[j] > pivot) {
-            j--
-        }
-        if (i <= j) {
-            const temp = arr[i]
-            arr[i] = arr[j]
-            arr[j] = temp
-            i++
-            j--
-        }
-    }
-    return i
-}
-
-/**
  * Quick Sort implementation using partition function
+ *
+ * Choose a pivot element is the first element of the array
  * @param arr
  * @param low
  * @param high
@@ -64,9 +37,38 @@ export function quickSortClassic(
     high: number,
 ): number[] {
     if (low < high) {
-        let pivot = partition(arr, low, high)
+        const pivot = partition(arr, low, high)
         quickSortClassic(arr, low, pivot - 1)
         quickSortClassic(arr, pivot + 1, high)
     }
     return arr
+}
+
+/**
+ * Partition function, pivot is the first element of the array
+ * @param arr
+ * @param low
+ * @param high
+ * @returns
+ */
+function partition(arr: number[], low: number, high: number): number {
+    const pivot = arr[low]
+    let i = low + 1
+    let j = high
+    while (i <= j) {
+        while (i <= j && arr[i] <= pivot) {
+            i++
+        }
+        while (i <= j && arr[j] > pivot) {
+            j--
+        }
+        if (i < j) {
+            const temp = arr[i]
+            arr[i] = arr[j]
+            arr[j] = temp
+        }
+    }
+    arr[low] = arr[j]
+    arr[j] = pivot
+    return j
 }

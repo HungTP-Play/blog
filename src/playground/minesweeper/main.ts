@@ -1,9 +1,19 @@
-import { MinesweeperGame } from './minesweeper';
-
 let openedCells: number[][] = [];
 let flaggedCells: number[][] = [];
 const board: number[][] = [];
+let cursor = [0, 0];
 const prompt = require('prompt-sync')();
+
+const NUMBERS: { [key: number]: string } = {
+    1: '\x1b[34m1\x1b[0m',
+    2: '\x1b[32m2\x1b[0m',
+    3: '\x1b[31m3\x1b[0m',
+    4: '\x1b[35m4\x1b[0m',
+    5: '\x1b[36m5\x1b[0m',
+    6: '\x1b[37m6\x1b[0m',
+    7: '\x1b[38m7\x1b[0m',
+    8: '\x1b[39m8\x1b[0m',
+};
 /**
  * -1 = mine
  *
@@ -105,7 +115,11 @@ export function printGameBoard(
                     ) {
                         return '🚩';
                     }
-                    return `${cell} `;
+
+                    if (cell === 0) {
+                        return '  ';
+                    }
+                    return `${NUMBERS[cell]} `;
                 })
                 .join(' '),
         );
@@ -117,6 +131,7 @@ export function printPlayBoard(
     board: number[][],
     openedCell: number[][],
     flaggedCells: number[][],
+    cursor: number[],
 ): void {
     for (let i = 0; i < board.length; i++) {
         console.log(
@@ -125,13 +140,21 @@ export function printPlayBoard(
                     const x = i;
                     const y = index;
 
+                    if (cursor[0] === x && cursor[1] === y) {
+                        return '▓ ';
+                    }
+
                     if (
                         openedCell.some(
                             (cell) => cell[0] === x && cell[1] === y,
                         )
                     ) {
-                        return `${cell} `;
+                        if (cell === 0) {
+                            return '  ';
+                        }
+                        return `${NUMBERS[cell]} `;
                     }
+
                     if (
                         flaggedCells.some(
                             (cell) => cell[0] === x && cell[1] === y,
@@ -139,7 +162,7 @@ export function printPlayBoard(
                     ) {
                         return '🚩';
                     }
-                    return '⬜';
+                    return '~ ';
                 })
                 .join(' '),
         );
@@ -191,8 +214,6 @@ export function open(board: number[][], x: number, y: number): boolean {
     } else {
         openedCells.push([x, y]);
     }
-    console.clear();
-    printPlayBoard(board, openedCells, flaggedCells);
     return false;
 }
 
@@ -246,7 +267,7 @@ export function main() {
 
     console.log(`Find ${numberOfBombs} bombs in ${columns}x${rows} board`);
     const board = buildGameBoard(columns, rows, numberOfBombs);
-    printPlayBoard(board, openedCells, flaggedCells);
+    printPlayBoard(board, openedCells, flaggedCells, cursor);
     let isGameOver = false;
     while (!isGameOver) {
         const xInput = prompt('Enter x: ');
@@ -284,7 +305,7 @@ export function main() {
                     flaggedCells.push([x, y]);
                 }
                 console.clear();
-                printPlayBoard(board, openedCells, flaggedCells);
+                printPlayBoard(board, openedCells, flaggedCells, cursor);
 
                 if (
                     flaggedCells.length === numberOfBombs &&
@@ -299,9 +320,84 @@ export function main() {
     }
 }
 
+function checkWin(
+    openedCells: number[][],
+    flaggedCells: number[][],
+    numberOfBombs: number,
+    columns: number,
+    rows: number,
+) {
+    return (
+        flaggedCells.length === numberOfBombs &&
+        openedCells.length === columns * rows - numberOfBombs
+    );
+}
+
 function mainNew() {
-    const game = new MinesweeperGame();
-    game.start();
+    const board = buildGameBoard(9, 9, 10);
+    printPlayBoard(board, openedCells, flaggedCells, cursor);
+    const readline = require('readline');
+    readline.emitKeypressEvents(process.stdin);
+    process.stdin.setRawMode(true);
+    process.stdin.on('keypress', (str, key) => {
+        if (key.ctrl && key.name === 'c') {
+            process.exit();
+        }
+
+        // Cursor movement
+        if (key.name === 'up') {
+            cursor[0] = Math.max(0, cursor[0] - 1);
+        } else if (key.name === 'down') {
+            cursor[0] = Math.min(8, cursor[0] + 1);
+        } else if (key.name === 'left') {
+            cursor[1] = Math.max(0, cursor[1] - 1);
+        } else if (key.name === 'right') {
+            cursor[1] = Math.min(8, cursor[1] + 1);
+        }
+
+        // Open by pressing space
+        if (key.name === 'space') {
+            const isGameOver = open(board, cursor[0], cursor[1]);
+            if (isGameOver) {
+                process.exit();
+            }
+
+            const isWin = checkWin(openedCells, flaggedCells, 10, 9, 9);
+            if (isWin) {
+                console.log('You win! 🎉🎉🎉🎉🎉');
+                process.exit();
+            }
+        }
+
+        // Flag by pressing f
+        if (key.name === 'f') {
+            if (
+                flaggedCells.some(
+                    (cell) => cell[0] === cursor[0] && cell[1] === cursor[1],
+                )
+            ) {
+                // Remove flag
+                flaggedCells = flaggedCells.filter(
+                    (cell) => cell[0] !== cursor[0] || cell[1] !== cursor[1],
+                );
+            } else if (
+                !openedCells.some(
+                    (cell) => cell[0] === cursor[0] && cell[1] === cursor[1],
+                )
+            ) {
+                flaggedCells.push([cursor[0], cursor[1]]);
+            }
+
+            const isWin = checkWin(openedCells, flaggedCells, 10, 9, 9);
+            if (isWin) {
+                console.log('You win! 🎉🎉🎉🎉🎉');
+                process.exit();
+            }
+        }
+        console.clear();
+        printPlayBoard(board, openedCells, flaggedCells, cursor);
+        console.log('Remaining 🚩 x', 10 - flaggedCells.length);
+    });
 }
 
 mainNew();

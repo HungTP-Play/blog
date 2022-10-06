@@ -16,8 +16,8 @@ const prompt = require('prompt-sync')();
  * 4 = 4 mines
  *
  * and so on...
- * @param width
- * @param height
+ * @param width width of the board
+ * @param height height of the board
  * @param numberOfBombs
  * @returns
  */
@@ -194,46 +194,56 @@ export function open(board: number[][], x: number, y: number): boolean {
     return false;
 }
 
-export function main() {
-    let width = 0;
-    let height = 0;
-    let numberOfBombs = 0;
-    console.log('Welcome to Minesweeper!');
-    console.log('Please select a difficulty:');
+export function minesweeperGreeting() {
+    const LOGO = `
+        $$\                                                                                     
+        \__|                                                                                    
+    $$$$$$\$$$$\  $$\ $$$$$$$\   $$$$$$$\ $$\  $$\  $$\  $$$$$$\   $$$$$$\   $$$$$$\   $$$$$$\   $$$$$$\  
+    $$  _$$  _$$\ $$ |$$  __$$\ $$  _____|$$ | $$ | $$ |$$  __$$\ $$  __$$\ $$  __$$\ $$  __$$\ $$  __$$\ 
+    $$ / $$ / $$ |$$ |$$ |  $$ |\$$$$$$\  $$ | $$ | $$ |$$$$$$$$ |$$$$$$$$ |$$ /  $$ |$$$$$$$$ |$$ |  \__|
+    $$ | $$ | $$ |$$ |$$ |  $$ | \____$$\ $$ | $$ | $$ |$$   ____|$$   ____|$$ |  $$ |$$   ____|$$ |      
+    $$ | $$ | $$ |$$ |$$ |  $$ |$$$$$$$  |\$$$$$\$$$$  |\$$$$$$$\ \$$$$$$$\ $$$$$$$  |\$$$$$$$\ $$ |      
+    \__| \__| \__|\__|\__|  \__|\_______/  \_____\____/  \_______| \_______|$$  ____/  \_______|\__|      
+                                                                $$ |                          
+                                                                $$ |                          
+                                                                \__|                          
+    `;
+    console.log(LOGO);
+}
+
+/**
+ * Select difficulty level and return the number of mines, rows and columns
+ */
+export function selectDifficulty(): number[] {
+    console.log('Select difficulty level:');
     console.log('1. Easy');
     console.log('2. Medium');
     console.log('3. Hard');
-    console.log('4. Custom');
-
-    const difficulty = parseInt(prompt('Select a difficulty: '));
+    const difficulty = parseInt(prompt('Choose a difficulty level: '));
     if (isNaN(difficulty)) {
         console.log('Invalid difficulty');
-        return;
+        return selectDifficulty();
     }
 
-    if (difficulty === 1) {
-        width = 8;
-        height = 8;
-        numberOfBombs = 10;
-    } else if (difficulty === 2) {
-        width = 16;
-        height = 16;
-        numberOfBombs = 40;
-    } else if (difficulty === 3) {
-        width = 30;
-        height = 16;
-        numberOfBombs = 99;
-    } else if (difficulty === 4) {
-        width = parseInt(prompt('Enter width: '));
-        height = parseInt(prompt('Enter height: '));
-        numberOfBombs = parseInt(prompt('Enter number of bombs: '));
-    } else {
-        console.log('Invalid difficulty');
-        return;
+    switch (difficulty) {
+        case 1:
+            return [10, 9, 9];
+        case 2:
+            return [40, 16, 16];
+        case 3:
+            return [99, 16, 30];
+        default:
+            console.log('Invalid difficulty');
+            return selectDifficulty();
     }
+}
 
-    console.log(`Find ${numberOfBombs} bombs in ${width}x${height} board`);
-    const board = buildGameBoard(width, height, numberOfBombs);
+export function main() {
+    minesweeperGreeting();
+    const [numberOfBombs, rows, columns] = selectDifficulty();
+
+    console.log(`Find ${numberOfBombs} bombs in ${columns}x${rows} board`);
+    const board = buildGameBoard(columns, rows, numberOfBombs);
     printPlayBoard(board, openedCells, flaggedCells);
     let isGameOver = false;
     while (!isGameOver) {
@@ -276,7 +286,7 @@ export function main() {
 
                 if (
                     flaggedCells.length === numberOfBombs &&
-                    openedCells.length === width * height - numberOfBombs
+                    openedCells.length === columns * rows - numberOfBombs
                 ) {
                     console.log('You win! 🎉🎉🎉🎉🎉');
                     isGameOver = true;

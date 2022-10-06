@@ -35,6 +35,7 @@ export class ImageToAsciiService {
                         const alpha = img.bitmap.data[idx + 3];
                         const grayScale = (red + green + blue) / 3;
                         const ascii = this.converter.convert(grayScale);
+                        // Print to console with color
                         process.stdout.write(ascii);
                     },
                 );

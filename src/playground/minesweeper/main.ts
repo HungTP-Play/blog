@@ -1,3 +1,5 @@
+import { MinesweeperGame } from './minesweeper';
+
 let openedCells: number[][] = [];
 let flaggedCells: number[][] = [];
 const board: number[][] = [];
@@ -297,4 +299,9 @@ export function main() {
     }
 }
 
-main();
+function mainNew() {
+    const game = new MinesweeperGame();
+    game.start();
+}
+
+mainNew();

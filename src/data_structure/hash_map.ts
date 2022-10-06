@@ -1,3 +1,3 @@
 interface HashMap {
-    [key: string]: any
+    [key: string]: any;
 }

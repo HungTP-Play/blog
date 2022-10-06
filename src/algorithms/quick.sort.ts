@@ -7,19 +7,19 @@
  */
 export function quickSort(arr: number[]): number[] {
     if (arr.length <= 1) {
-        return arr
+        return arr;
     }
-    const pivot = arr[0]
-    const left = []
-    const right = []
+    const pivot = arr[0];
+    const left = [];
+    const right = [];
     for (let i = 1; i < arr.length; i++) {
         if (arr[i] < pivot) {
-            left.push(arr[i])
+            left.push(arr[i]);
         } else {
-            right.push(arr[i])
+            right.push(arr[i]);
         }
     }
-    return quickSort(left).concat(pivot, quickSort(right))
+    return quickSort(left).concat(pivot, quickSort(right));
 }
 
 /**
@@ -37,11 +37,11 @@ export function quickSortClassic(
     high: number,
 ): number[] {
     if (low < high) {
-        const pivot = partition(arr, low, high)
-        quickSortClassic(arr, low, pivot - 1)
-        quickSortClassic(arr, pivot + 1, high)
+        const pivot = partition(arr, low, high);
+        quickSortClassic(arr, low, pivot - 1);
+        quickSortClassic(arr, pivot + 1, high);
     }
-    return arr
+    return arr;
 }
 
 /**
@@ -52,23 +52,23 @@ export function quickSortClassic(
  * @returns
  */
 function partition(arr: number[], low: number, high: number): number {
-    const pivot = arr[low]
-    let i = low + 1
-    let j = high
+    const pivot = arr[low];
+    let i = low + 1;
+    let j = high;
     while (i <= j) {
         while (i <= j && arr[i] <= pivot) {
-            i++
+            i++;
         }
         while (i <= j && arr[j] > pivot) {
-            j--
+            j--;
         }
         if (i < j) {
-            const temp = arr[i]
-            arr[i] = arr[j]
-            arr[j] = temp
+            const temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
         }
     }
-    arr[low] = arr[j]
-    arr[j] = pivot
-    return j
+    arr[low] = arr[j];
+    arr[j] = pivot;
+    return j;
 }

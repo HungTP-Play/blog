@@ -6,73 +6,73 @@
  * @returns
  */
 export function treeSort(arr: number[]): number[] {
-    const tree = new BinarySearchTree(arr)
-    return tree.inOrder()
+    const tree = new BinarySearchTree(arr);
+    return tree.inOrder();
 }
 
 export class BinarySearchTree {
-    root: Node | null
+    root: Node | null;
 
     constructor(arr: number[]) {
-        this.root = null
+        this.root = null;
         for (const item of arr) {
-            this.insert(item)
+            this.insert(item);
         }
     }
 
     insert(item: number) {
-        const node = new Node(item)
+        const node = new Node(item);
         if (this.root === null) {
-            this.root = node
+            this.root = node;
         } else {
-            this.root.insert(node)
+            this.root.insert(node);
         }
     }
 
     inOrder() {
         if (this.root === null) {
-            return []
+            return [];
         }
-        return this.root.inOrder()
+        return this.root.inOrder();
     }
 }
 
 export class Node {
-    data: number
-    left: Node | null
-    right: Node | null
+    data: number;
+    left: Node | null;
+    right: Node | null;
 
     constructor(data: number) {
-        this.data = data
-        this.left = null
-        this.right = null
+        this.data = data;
+        this.left = null;
+        this.right = null;
     }
 
     insert(node: Node) {
         if (node.data < this.data) {
             if (this.left === null) {
-                this.left = node
+                this.left = node;
             } else {
-                this.left.insert(node)
+                this.left.insert(node);
             }
         } else {
             if (this.right === null) {
-                this.right = node
+                this.right = node;
             } else {
-                this.right.insert(node)
+                this.right.insert(node);
             }
         }
     }
 
     inOrder(): any[] {
-        const arr = []
+        const arr = [];
         if (this.left !== null) {
-            arr.push(...this.left.inOrder())
+            arr.push(...this.left.inOrder());
         }
-        arr.push(this.data)
+        arr.push(this.data);
         if (this.right !== null) {
-            arr.push(...this.right.inOrder())
+            arr.push(...this.right.inOrder());
         }
-        return arr
+        return arr;
     }
 }

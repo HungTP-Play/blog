@@ -1,4 +1,4 @@
-import { selectionSort } from './selection.sort'
+import { selectionSort } from './selection.sort';
 
 describe('Test Selection Sort', () => {
     const cases = [
@@ -28,11 +28,11 @@ describe('Test Selection Sort', () => {
                 33, 34, 34, 43, 45, 56, 67, 78, 78, 89, 90,
             ],
         },
-    ]
+    ];
 
     cases.forEach((c) => {
         it(`should sort ${c.input} to ${c.output}`, () => {
-            expect(selectionSort(c.input)).toEqual(c.output)
-        })
-    })
-})
+            expect(selectionSort(c.input)).toEqual(c.output);
+        });
+    });
+});

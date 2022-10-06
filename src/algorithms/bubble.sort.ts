@@ -13,11 +13,11 @@ export function bubbleSort(arr: number[]): number[] {
             compare_index++
         ) {
             if (arr[compare_index] > arr[compare_index + 1]) {
-                const temp = arr[compare_index]
-                arr[compare_index] = arr[compare_index + 1]
-                arr[compare_index + 1] = temp
+                const temp = arr[compare_index];
+                arr[compare_index] = arr[compare_index + 1];
+                arr[compare_index + 1] = temp;
             }
         }
     }
-    return arr
+    return arr;
 }

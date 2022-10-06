@@ -171,6 +171,7 @@ export function getNeighborCells(
 
 export function open(board: number[][], x: number, y: number): boolean {
     if (board[x][y] === -1) {
+        console.clear();
         printGameBoard(board, openedCells, flaggedCells);
         console.log('Game over! 🚀');
         return true;

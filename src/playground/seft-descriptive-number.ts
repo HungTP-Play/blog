@@ -6,14 +6,14 @@
  */
 export function convertDecimalToBase(num: number, base: number): number {
     if (base < 2 || base > 9) {
-        throw new Error('Base must be between 2 and 9')
+        throw new Error('Base must be between 2 and 9');
     }
-    let result = ''
+    let result = '';
     while (num > 0) {
-        result = (num % base) + result
-        num = Math.floor(num / base)
+        result = (num % base) + result;
+        num = Math.floor(num / base);
     }
-    return parseInt(result)
+    return parseInt(result);
 }
 
 /**
@@ -27,13 +27,13 @@ export function isSelfDescriptiveNumber(
     base: number,
 ): boolean {
     if ([2, 3, 6].includes(base)) {
-        return false
+        return false;
     } else {
-        const baseNumber = convertDecimalToBase(decimal, base)
+        const baseNumber = convertDecimalToBase(decimal, base);
         if (baseNumber.toString().length !== base) {
-            return false
+            return false;
         } else {
-            const baseNumberArray = baseNumber.toString().split('')
+            const baseNumberArray = baseNumber.toString().split('');
             for (let i = 0; i < baseNumberArray.length; i++) {
                 if (
                     baseNumberArray[i] !==
@@ -41,10 +41,10 @@ export function isSelfDescriptiveNumber(
                         .filter((item) => item === baseNumberArray[i])
                         .length.toString()
                 ) {
-                    return false
+                    return false;
                 }
             }
-            return true
+            return true;
         }
     }
 }

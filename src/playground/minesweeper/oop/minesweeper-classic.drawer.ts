@@ -1,15 +1,4 @@
-export interface IMinesweeperDrawer {
-    draw(
-        board: number[][],
-        opened: number[][],
-        flags: number[][],
-        cursor: number[],
-    ): void;
-
-    drawLost(board: number[][], opened: number[][], flags: number[][]): void;
-
-    drawWon(board: number[][], opened: number[][], flags: number[][]): void;
-}
+import { IMinesweeperDrawer } from './minesweeper-drawer.interface';
 
 export class MinesweeperClassicDrawer implements IMinesweeperDrawer {
     NUMBERS: { [key: number]: string } = {
@@ -23,66 +12,13 @@ export class MinesweeperClassicDrawer implements IMinesweeperDrawer {
         8: '\x1b[39m8\x1b[0m',
     };
 
-    drawLost(board: number[][], opened: number[][], flags: number[][]): void {
-        for (let i = 0; i < board.length; i++) {
-            console.log(
-                board[i]
-                    .map((cell, index) => {
-                        const x = i;
-                        const y = index;
-
-                        if (cell === 0) {
-                            return '  ';
-                        }
-
-                        if (cell === -1) {
-                            return '🚀';
-                        }
-
-                        return `${this.NUMBERS[cell]} `;
-                    })
-                    .join(' '),
-            );
-        }
-    }
-
-    drawWon(board: number[][], opened: number[][], flags: number[][]): void {
-        for (let i = 0; i < board.length; i++) {
-            console.log(
-                board[i]
-                    .map((cell, index) => {
-                        const x = i;
-                        const y = index;
-
-                        if (
-                            opened.some(
-                                (cell) => cell[0] === x && cell[1] === y,
-                            )
-                        ) {
-                            if (cell === 0) {
-                                return '  ';
-                            }
-                            return `${this.NUMBERS[cell]} `;
-                        }
-
-                        if (
-                            flags.some((cell) => cell[0] === x && cell[1] === y)
-                        ) {
-                            return '🚩';
-                        }
-                        return '~ ';
-                    })
-                    .join(' '),
-            );
-        }
-    }
-
     draw(
         board: number[][],
         opened: number[][],
         flags: number[][],
         cursor: number[],
     ): void {
+        console.clear();
         for (let i = 0; i < board.length; i++) {
             console.log(
                 board[i]
@@ -115,5 +51,67 @@ export class MinesweeperClassicDrawer implements IMinesweeperDrawer {
                     .join(' '),
             );
         }
+    }
+
+    drawLost(board: number[][]): void {
+        console.clear();
+        for (let i = 0; i < board.length; i++) {
+            console.log(
+                board[i]
+                    .map((cell, index) => {
+                        const x = i;
+                        const y = index;
+
+                        if (cell === 0) {
+                            return '   ';
+                        }
+
+                        if (cell === -1) {
+                            return '🚀 ';
+                        }
+
+                        return `${this.NUMBERS[cell]}  `;
+                    })
+                    .join(' '),
+            );
+        }
+        console.log('You lost! 😭😭😭');
+    }
+
+    drawWon(board: number[][], opened: number[][], flags: number[][]): void {
+        console.clear();
+        for (let i = 0; i < board.length; i++) {
+            console.log(
+                board[i]
+                    .map((cell, index) => {
+                        const x = i;
+                        const y = index;
+
+                        if (
+                            opened.some(
+                                (cell) => cell[0] === x && cell[1] === y,
+                            )
+                        ) {
+                            if (cell === 0) {
+                                return '  ';
+                            }
+                            return `${this.NUMBERS[cell]} `;
+                        }
+
+                        if (
+                            flags.some((cell) => cell[0] === x && cell[1] === y)
+                        ) {
+                            return '🚩';
+                        }
+                        return '~ ';
+                    })
+                    .join(' '),
+            );
+        }
+        console.log('You won! 🎉🎉🎉');
+    }
+
+    drawRemainingFlags(remainingFlags: number): void {
+        console.log(`Remaining flags: 🚩x ${remainingFlags}`);
     }
 }

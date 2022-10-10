@@ -29,6 +29,10 @@ $$ | $$ | $$ |$$ |$$ |  $$ |$$$$$$$  |\$$$$$\$$$$  |\$$$$$$$\ \$$$$$$$\ $$$$$$$ 
         this.drawer = drawer;
     }
 
+    name(): string {
+        return 'Minesweeper';
+    }
+
     /**
      *
      * @returns [mines, rows, cols]

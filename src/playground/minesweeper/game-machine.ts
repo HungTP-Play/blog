@@ -1,9 +1,8 @@
-import { Minesweeper } from './oop/minesweeper';
-import { MinesweeperClassicDrawer } from './oop/minesweeper-classic.drawer';
+import { Game2048 } from '../2048/2048';
+import { Game2048ColorNumberDrawer } from '../2048/drawer';
 
 export function gameMachine() {
-    const minesweeper = new Minesweeper(new MinesweeperClassicDrawer());
-    minesweeper.start();
+    const game2048 = new Game2048(new Game2048ColorNumberDrawer());
 }
 
 gameMachine();

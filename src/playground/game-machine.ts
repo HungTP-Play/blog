@@ -4,6 +4,7 @@ import { Game2048ColorNumberDrawer } from './2048/drawer';
 import { IGame } from './minesweeper/oop/game.interface';
 import { Minesweeper } from './minesweeper/oop/minesweeper';
 import { MinesweeperClassicDrawer } from './minesweeper/oop/minesweeper-classic.drawer';
+import { SudokuGame, SudokuNumberColorDrawer } from './sudoku';
 
 export class GameMachine {
     private games: IGame[];
@@ -63,6 +64,7 @@ export class GameMachine {
 const gameMachine = new GameMachine([
     new Minesweeper(new MinesweeperClassicDrawer()),
     new Game2048(new Game2048ColorNumberDrawer()),
+    new SudokuGame(new SudokuNumberColorDrawer()),
 ]);
 
 gameMachine.powerOn();

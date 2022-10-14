@@ -1,5 +1,6 @@
 import { IGame } from '../../minesweeper/oop/game.interface';
 import { ISudokuDrawer } from './sudoku.drawer';
+import { ISudokuSolver, SudokuSolver } from './sudoku.solver';
 const prompt = require('prompt-sync')();
 
 export class SudokuGame implements IGame {
@@ -9,13 +10,15 @@ export class SudokuGame implements IGame {
     board: number[][] = [];
     solvedBoard: number[][] = [];
     drawer: ISudokuDrawer;
+    solver?: ISudokuSolver;
     level: number = 1; // Easy
     processInterval: any;
     LEVEL_HINTS: { [key: number]: number } = {
-        1: 20,
-        2: 10,
-        3: 5,
+        1: 45,
+        2: 35,
+        3: 25,
     };
+    NUMBERS: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     INTERVAL_TIME_MS = 1000;
     LOGO = `
     
@@ -55,29 +58,40 @@ export class SudokuGame implements IGame {
             console.log('Invalid difficulty');
             return this.selectLevel();
         }
-
         this.level = difficulty;
-        this.generateBoard();
     }
 
-    /**
-     * Generate a solved board
-     */
-    private generateSolvedBoard(): void {
-        // Generate a solved board
+    canPlace(num: number, x: number, y: number): boolean {
+        // Check row
+        if (this.solvedBoard[x].includes(num)) return false;
+
+        // Check column
         for (let i = 0; i < this.BOARD_SIZE; i++) {
-            for (let j = 0; j < this.BOARD_SIZE; j++) {
-                this.solvedBoard[i][j] =
-                    ((i * 3 + Math.floor(i / 3) + j) % 9) + 1;
+            if (this.solvedBoard[i][y] === num) return false;
+        }
+
+        // Check 3x3 box
+        const boxX = Math.floor(x / 3) * 3;
+        const boxY = Math.floor(y / 3) * 3;
+        for (let i = boxX; i < boxX + 3; i++) {
+            for (let j = boxY; j < boxY + 3; j++) {
+                if (this.solvedBoard[i][j] === num) return false;
             }
         }
+
+        return true;
     }
 
     /**
-     * Generate a new board using hint from solved board
+     * Generate a new board using hint from solved board (see: https://www.geeksforgeeks.org/sudoku-backtracking-7/)
      */
     private generateBoard(): void {
-        this.generateSolvedBoard();
+        this.fillDiagonalBoxes();
+        this.fillRemaining(0, 3);
+        this.mapSolved();
+    }
+
+    private mapSolved(): void {
         const hints = this.LEVEL_HINTS[this.level];
         for (let i = 0; i < hints; i++) {
             const x = Math.floor(Math.random() * this.BOARD_SIZE);
@@ -86,35 +100,112 @@ export class SudokuGame implements IGame {
         }
     }
 
-    /**
-     * Return the game status
-     * @returns
-     */
-    private isBoardFilled(): boolean {
-        return this.board.every((row) => row.every((cell) => cell !== 0));
+    private fillRemaining(x: number, y: number): boolean {
+        if (y >= this.BOARD_SIZE && x < this.BOARD_SIZE - 1) {
+            x++;
+            y = 0;
+        }
+        if (x >= this.BOARD_SIZE && y >= this.BOARD_SIZE) {
+            return true;
+        }
+
+        if (x < 3) {
+            if (y < 3) y = 3;
+        } else if (x < this.BOARD_SIZE - 3) {
+            if (y === Math.floor(x / 3) * 3) y += 3;
+        } else {
+            if (y === this.BOARD_SIZE - 3) {
+                x++;
+                y = 0;
+                if (x >= this.BOARD_SIZE) return true;
+            }
+        }
+
+        for (let num = 1; num <= this.BOARD_SIZE; num++) {
+            if (this.canPlace(num, x, y)) {
+                this.solvedBoard[x][y] = num;
+                if (this.fillRemaining(x, y + 1)) return true;
+                this.solvedBoard[x][y] = 0;
+            }
+        }
+        return false;
+    }
+
+    private fillDiagonalBoxes(): void {
+        for (let i = 0; i < this.BOARD_SIZE; i += 3) {
+            this.fillBox(i, i);
+        }
+    }
+
+    private randomPickNumber(): number {
+        return this.NUMBERS[Math.floor(Math.random() * this.NUMBERS.length)];
+    }
+
+    private fillBox(x: number, y: number): void {
+        let num = this.randomPickNumber();
+        for (let i = x; i < x + 3; i++) {
+            for (let j = y; j < y + 3; j++) {
+                while (!this.canPlace(num, i, j)) {
+                    num = this.randomPickNumber();
+                }
+                this.solvedBoard[i][j] = num;
+            }
+        }
     }
 
     /**
-     * Check if the game is finished, only check the board is filled
+     * Win when all cells are filled, no empty cell, no wrong number
      * @returns
      */
     private isWin(): boolean {
-        if (!this.isBoardFilled()) return false;
+        // Check if all cells are filled
         for (let i = 0; i < this.BOARD_SIZE; i++) {
             for (let j = 0; j < this.BOARD_SIZE; j++) {
-                if (this.board[i][j] !== this.solvedBoard[i][j]) return false;
+                if (this.board[i][j] === 0) return false;
             }
         }
+
+        // Check rows
+        for (let i = 0; i < this.BOARD_SIZE; i++) {
+            const row = this.board[i];
+            const set = new Set(row);
+            if (set.size !== this.BOARD_SIZE) return false;
+        }
+
+        // Check columns
+        for (let i = 0; i < this.BOARD_SIZE; i++) {
+            const column = this.board.map((row) => row[i]);
+            const set = new Set(column);
+            if (set.size !== this.BOARD_SIZE) return false;
+        }
+
+        // Check 3x3 boxes
+        for (let i = 0; i < this.BOARD_SIZE; i += 3) {
+            for (let j = 0; j < this.BOARD_SIZE; j += 3) {
+                const box = [];
+                for (let k = i; k < i + 3; k++) {
+                    for (let l = j; l < j + 3; l++) {
+                        box.push(this.board[k][l]);
+                    }
+                }
+                const set = new Set(box);
+                if (set.size !== this.BOARD_SIZE) return false;
+            }
+        }
+
         return true;
     }
 
     // Game loop to handle time counting and game input
     private gameLoop(): void {
         this.startTime = Date.now();
+        this.generateBoard();
         this.handleInput();
+        this.drawer.draw(this.board, this.cursor, this.startTime);
         const interval = setInterval(() => {
             if (this.isWin()) {
                 clearInterval(interval);
+                this.drawer.draw(this.board, this.cursor, this.getTime());
                 console.log('You win! 🎉🎉🎉');
                 console.log(`Time: ${this.getTime()}`);
                 return;
@@ -122,6 +213,19 @@ export class SudokuGame implements IGame {
 
             this.drawer.draw(this.board, [...this.cursor], this.getTime());
         }, this.INTERVAL_TIME_MS);
+    }
+
+    private startSolveProcess(): void {
+        const solveInterval = setInterval(() => {
+            if (this.solver?.isSolved()) {
+                clearInterval(solveInterval);
+            }
+            let stepBoard = this.solver?.nextStep()!;
+            this.board = stepBoard;
+            if (this.isWin()) {
+                clearInterval(solveInterval);
+            }
+        }, 100);
     }
 
     private handleInput(): void {
@@ -132,6 +236,9 @@ export class SudokuGame implements IGame {
         process.stdin.on('keypress', (str, key) => {
             if (key.ctrl && key.name === 'c') {
                 this.stop();
+            } else if (key.name === 's') {
+                this.solver = new SudokuSolver(this.board);
+                this.startSolveProcess();
             } else if (key.name === 'up') {
                 this.cursor[0] = Math.max(this.cursor[0] - 1, 0);
             } else if (key.name === 'down') {

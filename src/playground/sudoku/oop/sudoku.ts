@@ -1,5 +1,6 @@
 import { IGame } from '../../minesweeper/oop/game.interface';
 import { ISudokuDrawer } from './sudoku.drawer';
+import { ISudokuGenerator } from './sudoku.generate';
 import { ISudokuSolver, SudokuSolver } from './sudoku.solver';
 const prompt = require('prompt-sync')();
 
@@ -8,9 +9,9 @@ export class SudokuGame implements IGame {
     cursor: number[] = [0, 0]; // cx, cy: cursor x, cursor y
     startTime: number = -1; // Game not started yet
     board: number[][] = [];
-    solvedBoard: number[][] = [];
     drawer: ISudokuDrawer;
     solver?: ISudokuSolver;
+    generator: ISudokuGenerator;
     level: number = 1; // Easy
     processInterval: any;
     LEVEL_HINTS: { [key: number]: number } = {
@@ -31,15 +32,12 @@ export class SudokuGame implements IGame {
             
     `;
 
-    constructor(drawer: ISudokuDrawer) {
+    constructor(drawer: ISudokuDrawer, gen: ISudokuGenerator) {
         this.board = Array(this.BOARD_SIZE)
             .fill(0)
             .map(() => Array(this.BOARD_SIZE).fill(0));
-
-        this.solvedBoard = Array(this.BOARD_SIZE)
-            .fill(0)
-            .map(() => Array(this.BOARD_SIZE).fill(0));
         this.drawer = drawer;
+        this.generator = gen;
     }
 
     /**
@@ -61,96 +59,15 @@ export class SudokuGame implements IGame {
         this.level = difficulty;
     }
 
-    canPlace(num: number, x: number, y: number): boolean {
-        // Check row
-        if (this.solvedBoard[x].includes(num)) return false;
-
-        // Check column
-        for (let i = 0; i < this.BOARD_SIZE; i++) {
-            if (this.solvedBoard[i][y] === num) return false;
-        }
-
-        // Check 3x3 box
-        const boxX = Math.floor(x / 3) * 3;
-        const boxY = Math.floor(y / 3) * 3;
-        for (let i = boxX; i < boxX + 3; i++) {
-            for (let j = boxY; j < boxY + 3; j++) {
-                if (this.solvedBoard[i][j] === num) return false;
-            }
-        }
-
-        return true;
-    }
-
     /**
      * Generate a new board using hint from solved board (see: https://www.geeksforgeeks.org/sudoku-backtracking-7/)
      */
     private generateBoard(): void {
-        this.fillDiagonalBoxes();
-        this.fillRemaining(0, 3);
-        this.mapSolved();
-    }
-
-    private mapSolved(): void {
-        const hints = this.LEVEL_HINTS[this.level];
-        for (let i = 0; i < hints; i++) {
-            const x = Math.floor(Math.random() * this.BOARD_SIZE);
-            const y = Math.floor(Math.random() * this.BOARD_SIZE);
-            this.board[x][y] = this.solvedBoard[x][y];
-        }
-    }
-
-    private fillRemaining(x: number, y: number): boolean {
-        if (y >= this.BOARD_SIZE && x < this.BOARD_SIZE - 1) {
-            x++;
-            y = 0;
-        }
-        if (x >= this.BOARD_SIZE && y >= this.BOARD_SIZE) {
-            return true;
-        }
-
-        if (x < 3) {
-            if (y < 3) y = 3;
-        } else if (x < this.BOARD_SIZE - 3) {
-            if (y === Math.floor(x / 3) * 3) y += 3;
-        } else {
-            if (y === this.BOARD_SIZE - 3) {
-                x++;
-                y = 0;
-                if (x >= this.BOARD_SIZE) return true;
-            }
-        }
-
-        for (let num = 1; num <= this.BOARD_SIZE; num++) {
-            if (this.canPlace(num, x, y)) {
-                this.solvedBoard[x][y] = num;
-                if (this.fillRemaining(x, y + 1)) return true;
-                this.solvedBoard[x][y] = 0;
-            }
-        }
-        return false;
-    }
-
-    private fillDiagonalBoxes(): void {
-        for (let i = 0; i < this.BOARD_SIZE; i += 3) {
-            this.fillBox(i, i);
-        }
-    }
-
-    private randomPickNumber(): number {
-        return this.NUMBERS[Math.floor(Math.random() * this.NUMBERS.length)];
-    }
-
-    private fillBox(x: number, y: number): void {
-        let num = this.randomPickNumber();
-        for (let i = x; i < x + 3; i++) {
-            for (let j = y; j < y + 3; j++) {
-                while (!this.canPlace(num, i, j)) {
-                    num = this.randomPickNumber();
-                }
-                this.solvedBoard[i][j] = num;
-            }
-        }
+        const genBoard = this.generator.generate(
+            this.LEVEL_HINTS[this.level],
+            this.board.length,
+        );
+        this.board = genBoard;
     }
 
     /**

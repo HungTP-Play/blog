@@ -4,6 +4,8 @@ import { Game2048ColorNumberDrawer } from './2048/drawer';
 import { IGame } from './minesweeper/oop/game.interface';
 import { Minesweeper } from './minesweeper/oop/minesweeper';
 import { MinesweeperClassicDrawer } from './minesweeper/oop/minesweeper-classic.drawer';
+import { NQueen } from './n-queen/oop/n-queen';
+import { NQueenDrawer } from './n-queen/oop/n-queen.drawer';
 import { SudokuGame, SudokuNumberColorDrawer } from './sudoku';
 import { SudokuDiagonalGenerator } from './sudoku/oop/sudoku.generate';
 
@@ -69,6 +71,7 @@ const gameMachine = new GameMachine([
         new SudokuNumberColorDrawer(),
         new SudokuDiagonalGenerator(),
     ),
+    new NQueen(new NQueenDrawer()),
 ]);
 
 gameMachine.powerOn();

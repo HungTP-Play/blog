@@ -1,6 +1,7 @@
 const prompt = require('prompt-sync')();
 import { Game2048 } from './2048/2048';
 import { Game2048ColorNumberDrawer } from './2048/drawer';
+import { KnightTour, KnightTourDrawer } from './knight-tour';
 import { IGame } from './minesweeper/oop/game.interface';
 import { Minesweeper } from './minesweeper/oop/minesweeper';
 import { MinesweeperClassicDrawer } from './minesweeper/oop/minesweeper-classic.drawer';
@@ -72,6 +73,7 @@ const gameMachine = new GameMachine([
         new SudokuDiagonalGenerator(),
     ),
     new NQueen(new NQueenDrawer()),
+    new KnightTour(new KnightTourDrawer()),
 ]);
 
 gameMachine.powerOn();

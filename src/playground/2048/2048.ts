@@ -64,6 +64,7 @@ export class Game2048 implements IGame {
      *
      */
     private up() {
+        this.movement = false;
         let scoreToAdd = 0;
         for (let c = 0; c < this.cols; c++) {
             for (let r = 0; r < this.rows; r++) {
@@ -84,7 +85,6 @@ export class Game2048 implements IGame {
                             this.movement = true;
                             break;
                         } else {
-                            this.movement = false;
                             break;
                         }
                     }
@@ -104,6 +104,7 @@ export class Game2048 implements IGame {
      *
      */
     private down() {
+        this.movement = false;
         let scoreToAdd = 0;
         for (let c = 0; c < this.cols; c++) {
             for (let r = this.rows - 1; r >= 0; r--) {
@@ -124,7 +125,6 @@ export class Game2048 implements IGame {
                             this.movement = true;
                             break;
                         } else {
-                            this.movement = false;
                             break;
                         }
                     }
@@ -144,6 +144,7 @@ export class Game2048 implements IGame {
      *
      */
     private left() {
+        this.movement = false;
         let scoreToAdd = 0;
         for (let r = 0; r < this.rows; r++) {
             for (let c = 0; c < this.cols; c++) {
@@ -164,7 +165,6 @@ export class Game2048 implements IGame {
                             scoreToAdd += this.board[r][col - 1];
                             break;
                         } else {
-                            this.movement = false;
                             break;
                         }
                     }
@@ -185,6 +185,7 @@ export class Game2048 implements IGame {
      */
     private right() {
         let scoreToAdd = 0;
+        this.movement = false;
         for (let r = 0; r < this.rows; r++) {
             for (let c = this.cols - 1; c >= 0; c--) {
                 if (this.board[r][c] !== 0) {
@@ -204,7 +205,6 @@ export class Game2048 implements IGame {
                             scoreToAdd += this.board[r][col + 1];
                             break;
                         } else {
-                            this.movement = false;
                             break;
                         }
                     }

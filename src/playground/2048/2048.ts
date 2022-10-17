@@ -8,6 +8,7 @@ export class Game2048 implements IGame {
     rows = 4;
     cols = 4;
     drawer: IGame2048Drawer;
+    movement: boolean = true;
 
     constructor(drawer: IGame2048Drawer) {
         this.drawer = drawer;
@@ -63,7 +64,6 @@ export class Game2048 implements IGame {
      *
      */
     private up() {
-        let movement = false;
         let scoreToAdd = 0;
         for (let c = 0; c < this.cols; c++) {
             for (let r = 0; r < this.rows; r++) {
@@ -73,7 +73,7 @@ export class Game2048 implements IGame {
                         if (this.board[row - 1][c] === 0) {
                             this.board[row - 1][c] = this.board[row][c];
                             this.board[row][c] = 0;
-                            movement = true;
+                            this.movement = true;
                             row--;
                         } else if (
                             this.board[row - 1][c] === this.board[row][c]
@@ -81,9 +81,10 @@ export class Game2048 implements IGame {
                             this.board[row - 1][c] *= 2;
                             this.board[row][c] = 0;
                             scoreToAdd += this.board[row - 1][c];
-                            movement = true;
+                            this.movement = true;
                             break;
                         } else {
+                            this.movement = false;
                             break;
                         }
                     }
@@ -91,7 +92,7 @@ export class Game2048 implements IGame {
             }
         }
 
-        if (movement) {
+        if (this.movement) {
             this.numberOfMoves++;
         }
 
@@ -103,7 +104,6 @@ export class Game2048 implements IGame {
      *
      */
     private down() {
-        let movement = false;
         let scoreToAdd = 0;
         for (let c = 0; c < this.cols; c++) {
             for (let r = this.rows - 1; r >= 0; r--) {
@@ -113,7 +113,7 @@ export class Game2048 implements IGame {
                         if (this.board[row + 1][c] === 0) {
                             this.board[row + 1][c] = this.board[row][c];
                             this.board[row][c] = 0;
-                            movement = true;
+                            this.movement = true;
                             row++;
                         } else if (
                             this.board[row + 1][c] === this.board[row][c]
@@ -121,9 +121,10 @@ export class Game2048 implements IGame {
                             this.board[row + 1][c] *= 2;
                             this.board[row][c] = 0;
                             scoreToAdd += this.board[row + 1][c];
-                            movement = true;
+                            this.movement = true;
                             break;
                         } else {
+                            this.movement = false;
                             break;
                         }
                     }
@@ -131,7 +132,7 @@ export class Game2048 implements IGame {
             }
         }
 
-        if (movement) {
+        if (this.movement) {
             this.numberOfMoves++;
         }
 
@@ -143,7 +144,6 @@ export class Game2048 implements IGame {
      *
      */
     private left() {
-        let movement = false;
         let scoreToAdd = 0;
         for (let r = 0; r < this.rows; r++) {
             for (let c = 0; c < this.cols; c++) {
@@ -153,17 +153,18 @@ export class Game2048 implements IGame {
                         if (this.board[r][col - 1] === 0) {
                             this.board[r][col - 1] = this.board[r][col];
                             this.board[r][col] = 0;
-                            movement = true;
+                            this.movement = true;
                             col--;
                         } else if (
                             this.board[r][col - 1] === this.board[r][col]
                         ) {
                             this.board[r][col - 1] *= 2;
                             this.board[r][col] = 0;
-                            movement = true;
+                            this.movement = true;
                             scoreToAdd += this.board[r][col - 1];
                             break;
                         } else {
+                            this.movement = false;
                             break;
                         }
                     }
@@ -171,7 +172,7 @@ export class Game2048 implements IGame {
             }
         }
 
-        if (movement) {
+        if (this.movement) {
             this.numberOfMoves++;
         }
 
@@ -183,7 +184,6 @@ export class Game2048 implements IGame {
      *
      */
     private right() {
-        let movement = false;
         let scoreToAdd = 0;
         for (let r = 0; r < this.rows; r++) {
             for (let c = this.cols - 1; c >= 0; c--) {
@@ -193,17 +193,18 @@ export class Game2048 implements IGame {
                         if (this.board[r][col + 1] === 0) {
                             this.board[r][col + 1] = this.board[r][col];
                             this.board[r][col] = 0;
-                            movement = true;
+                            this.movement = true;
                             col++;
                         } else if (
                             this.board[r][col + 1] === this.board[r][col]
                         ) {
                             this.board[r][col + 1] *= 2;
                             this.board[r][col] = 0;
-                            movement = true;
+                            this.movement = true;
                             scoreToAdd += this.board[r][col + 1];
                             break;
                         } else {
+                            this.movement = false;
                             break;
                         }
                     }
@@ -211,7 +212,7 @@ export class Game2048 implements IGame {
             }
         }
 
-        if (movement) {
+        if (this.movement) {
             this.numberOfMoves++;
         }
 
@@ -301,7 +302,7 @@ export class Game2048 implements IGame {
                         }
                         break;
                 }
-                if (this.hasEmptyCell()) {
+                if (this.hasEmptyCell() && this.movement === true) {
                     this.randomPlaceNumber();
                 }
                 this.checkLose();
